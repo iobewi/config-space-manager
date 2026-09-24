@@ -77,4 +77,4 @@ whole-configuration replacement.
 ## Status
 
 Initial API under active development. The first hardware backend is
-`config-space-manager-esp-nvs`, integrated with `esp-storage-manager`.
+`config-space-manager-esp-storage`, integrated with `esp-storage-manager`.

@@ -1,13 +1,13 @@
-# config-space-manager-esp-nvs
+# config-space-manager-esp-storage
 
-ESP/NVS backend for `config-space-manager`.
+ESP storage backend for `config-space-manager`, implemented on top of `esp-storage-manager`.
 
 The repository keeps the architecture split into two layers:
 
 ```text
 config-space-manager
         │
-        └── backends/esp-nvs
+        └── backends/esp-storage-manager
                   │
                   ▼
           esp-storage-manager

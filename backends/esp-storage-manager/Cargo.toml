@@ -1,10 +1,10 @@
 [package]
-name = "config-space-manager-esp-nvs"
+name = "config-space-manager-esp-storage"
 version = "0.1.0"
 edition = "2024"
 rust-version = "1.88"
 license = "MIT"
-description = "ESP NVS backend for config-space-manager"
+description = "ESP storage-manager backend for config-space-manager"
 repository = "https://github.com/iobewi/config-space-manager"
 keywords = ["embedded", "configuration", "esp32", "nvs", "no-std"]
 categories = ["embedded", "hardware-support", "no-std"]
