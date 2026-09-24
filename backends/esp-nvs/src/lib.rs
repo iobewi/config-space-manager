@@ -105,7 +105,7 @@ impl NvsConfigBackend {
     ) -> Result<Self, NvsConfigError> {
         let capacity_units = {
             let mut flash = flash.lock().await;
-            let nvs = Nvs::new(partition.offset, partition.size, NvsFlash(&mut *flash))
+            let mut nvs = Nvs::new(partition.offset, partition.size, NvsFlash(&mut *flash))
                 .map_err(|e| {
                     warn!("NVS unavailable: {e:?}");
                     HEALTHY.store(false, Ordering::Relaxed);
