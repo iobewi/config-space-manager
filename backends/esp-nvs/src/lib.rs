@@ -118,7 +118,15 @@ impl NvsConfigBackend {
             })?;
             let reclaimable = (stats.entries_overall.empty as usize)
                 .saturating_add(stats.entries_overall.erased as usize);
-            reclaimable.saturating_sub(ENTRIES_PER_PAGE)
+            // Reservations are computed from each space's full budget, which
+            // already covers the entries its stored blob occupies. Those
+            // entries are neither empty nor erased, so they must be added back
+            // or they would be counted twice and capacity would shrink with
+            // every value persisted, until the next boot's claims fail.
+            let owned = Self::owned_entries(&mut nvs)?;
+            reclaimable
+                .saturating_add(owned)
+                .saturating_sub(ENTRIES_PER_PAGE)
         };
         HEALTHY.store(true, Ordering::Relaxed);
         Ok(Self { flash, partition, capacity_units })
@@ -169,6 +177,33 @@ impl NvsConfigBackend {
             return Err(NvsConfigError::InvalidSpace);
         }
         Ok(esp_nvs::Key::from_slice(space.as_bytes()))
+    }
+
+    /// Entries currently written by this backend's own blobs (one version per
+    /// space; superseded versions are erased and already counted as free).
+    fn owned_entries<T: esp_nvs::platform::Platform>(
+        nvs: &mut Nvs<T>,
+    ) -> Result<usize, NvsConfigError> {
+        let mut keys = Vec::new();
+        for entry in nvs.typed_entries() {
+            let (namespace, key, _) = entry.map_err(|e| {
+                warn!("Failed to enumerate NVS entries: {e:?}");
+                NvsConfigError::Write
+            })?;
+            if namespace == NAMESPACE {
+                keys.push(key);
+            }
+        }
+        let mut owned = 0usize;
+        for key in keys {
+            let raw = nvs.get::<Vec<u8>>(&NAMESPACE, &key).map_err(|e| {
+                warn!("Failed to read blob {}: {e:?}", key.as_str());
+                NvsConfigError::Write
+            })?;
+            let entries = Self::entries_for_blob(raw.len()).ok_or(NvsConfigError::CorruptRecord)?;
+            owned = owned.saturating_add(entries);
+        }
+        Ok(owned)
     }
 
     fn entries_for_blob(encoded_size: usize) -> Option<usize> {
