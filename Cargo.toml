@@ -5,6 +5,8 @@ edition = "2024"
 rust-version = "1.88"
 license = "MIT"
 description = "No-std quota and ownership layer for isolated component configuration spaces"
+repository = "https://github.com/iobewi/config-space-manager"
+readme = "README.md"
 keywords = ["embedded", "configuration", "no-std"]
 categories = ["embedded", "no-std"]
 
