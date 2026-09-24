@@ -23,7 +23,7 @@ The manager does **not** know what an SSID, certificate, token, GPIO, or control
 config-space-manager/
 ├── src/                    core abstraction, hardware-agnostic
 └── backends/
-    └── esp-nvs/            ESP/NVS backend using esp-storage-manager
+    └── esp-nvs/            self-contained ESP NVS backend
 ```
 
 The core crate deliberately has no ESP dependency. Hardware-specific persistence
@@ -77,4 +77,4 @@ whole-configuration replacement.
 ## Status
 
 Initial API under active development. The first hardware backend is
-`config-space-manager-esp-storage`, integrated with `esp-storage-manager`.
+`config-space-manager-esp-nvs`, owning its ESP NVS/flash implementation directly.

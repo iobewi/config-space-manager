@@ -1,0 +1,25 @@
+[package]
+name = "config-space-manager-esp-nvs"
+version = "0.1.0"
+edition = "2024"
+rust-version = "1.88"
+license = "MIT"
+description = "ESP NVS backend for config-space-manager"
+repository = "https://github.com/iobewi/config-space-manager"
+keywords = ["embedded", "configuration", "esp32", "nvs", "no-std"]
+categories = ["embedded", "hardware-support", "no-std"]
+
+[features]
+default = []
+esp32c3 = ["esp-hal/esp32c3", "esp-storage/esp32c3", "esp-nvs/esp32c3"]
+esp32s3 = ["esp-hal/esp32s3", "esp-storage/esp32s3", "esp-nvs/esp32s3"]
+
+[dependencies]
+config-space-manager = { path = "../.." }
+embassy-sync = "0.8.0"
+embedded-storage = "0.3.1"
+esp-hal = { version = "~1.1.0", default-features = false, features = ["unstable"] }
+esp-storage = "0.9.0"
+esp-nvs = "0.5.0"
+static_cell = "2.1.1"
+log = { version = "0.4.29", default-features = false }
