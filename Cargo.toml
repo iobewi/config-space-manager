@@ -10,5 +10,8 @@ readme = "README.md"
 keywords = ["embedded", "configuration", "no-std"]
 categories = ["embedded", "no-std"]
 
-[dependencies]
+[workspace]
+members = [".", "backends/esp-nvs"]
+resolver = "3"
 
+[dependencies]
