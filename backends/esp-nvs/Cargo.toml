@@ -11,15 +11,13 @@ categories = ["embedded", "hardware-support", "no-std"]
 
 [features]
 default = []
-esp32c3 = ["esp-hal/esp32c3", "esp-storage/esp32c3", "esp-nvs/esp32c3"]
-esp32s3 = ["esp-hal/esp32s3", "esp-storage/esp32s3", "esp-nvs/esp32s3"]
+esp32c3 = ["esp-flash-access/esp32c3", "esp-nvs/esp32c3"]
+esp32s3 = ["esp-flash-access/esp32s3", "esp-nvs/esp32s3"]
 
 [dependencies]
 config-space-manager = { path = "../.." }
-embassy-sync = "0.8.0"
+esp-flash-access = { git = "https://github.com/iobewi/esp-storage-manager", rev = "b7fb2f6" }
 embedded-storage = "0.3.1"
-esp-hal = { version = "~1.1.0", default-features = false, features = ["unstable"] }
-esp-storage = "0.9.0"
 esp-nvs = "0.5.0"
-static_cell = "2.1.1"
+esp-storage = "0.9.0"
 log = { version = "0.4.29", default-features = false }
