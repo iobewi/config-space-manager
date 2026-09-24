@@ -22,7 +22,7 @@ use embedded_storage::nor_flash::{ErrorType, MultiwriteNorFlash, NorFlash, ReadN
 use esp_hal::peripherals::FLASH;
 use esp_nvs::error::Error as NvsError;
 use esp_nvs::platform::Crc;
-use esp_nvs::{Get, Nvs, Set};
+use esp_nvs::Nvs;
 use esp_storage::FlashStorage;
 use log::warn;
 use static_cell::StaticCell;
