@@ -105,7 +105,7 @@ impl NvsConfigBackend {
     ) -> Result<Self, NvsConfigError> {
         let capacity_units = {
             let mut flash = flash.lock().await;
-            let mut nvs = Nvs::new(partition.offset, partition.size, NvsFlash(&mut *flash))
+            let mut nvs = Nvs::new(partition.offset, partition.size, NvsFlash(&mut flash))
                 .map_err(|e| {
                     warn!("NVS unavailable: {e:?}");
                     HEALTHY.store(false, Ordering::Relaxed);
@@ -145,7 +145,7 @@ impl NvsConfigBackend {
         f: impl FnOnce(&mut Nvs<NvsFlash<'_>>) -> Result<R, NvsConfigError>,
     ) -> Result<R, NvsConfigError> {
         let mut flash = self.flash.lock().await;
-        let mut nvs = Nvs::new(self.partition.offset, self.partition.size, NvsFlash(&mut *flash))
+        let mut nvs = Nvs::new(self.partition.offset, self.partition.size, NvsFlash(&mut flash))
             .map_err(|e| {
                 warn!("NVS unavailable: {e:?}");
                 HEALTHY.store(false, Ordering::Relaxed);
