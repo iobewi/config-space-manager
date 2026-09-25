@@ -23,11 +23,12 @@ The manager does **not** know what an SSID, certificate, token, GPIO, or control
 config-space-manager/
 ├── src/                    core abstraction, hardware-agnostic
 └── backends/
-    └── esp-nvs/            self-contained ESP NVS backend
+    └── esp-nvs/            ConfigSpace semantics over ESP NVS
 ```
 
-The core crate deliberately has no ESP dependency. Hardware-specific persistence
-lives in backend crates beside it, not in application repositories.
+The core crate deliberately has no ESP dependency. The ESP backend owns
+ConfigSpace-specific NVS persistence semantics while the common physical ESP
+storage mechanics are supplied by `esp-storage-manager`.
 
 ## Boundary
 
@@ -40,11 +41,19 @@ The core owns:
 - generations;
 - isolation through capability handles.
 
-Backend crates own:
+The ESP/NVS backend owns:
 
-- physical storage accounting;
-- persistence mechanics;
-- backend-specific atomic replacement semantics.
+- ConfigSpace record framing inside NVS;
+- NVS capacity accounting for ConfigSpace budgets;
+- backend health checks;
+- mapping ConfigSpace operations to NVS operations.
+
+`esp-storage-manager` owns:
+
+- the single physical ESP flash capability;
+- serialization of physical flash access;
+- the ESP NVS platform adapter;
+- generic ESP partition/raw-storage helpers.
 
 Components own:
 
@@ -76,5 +85,5 @@ whole-configuration replacement.
 
 ## Status
 
-Initial API under active development. The first hardware backend is
-`config-space-manager-esp-nvs`, owning its ESP NVS/flash implementation directly.
+Initial API under active development. The first hardware adapter is
+`config-space-manager-esp-nvs`, layered on the common ESP storage backend.
