@@ -3,7 +3,7 @@
 //! ESP NVS backend for config-space-manager.
 //!
 //! ConfigSpace persistence semantics live here. Physical flash ownership and
-//! the ESP NVS platform bridge are supplied by esp-storage-manager, allowing
+//! the ESP NVS platform bridge are supplied by espbewi, allowing
 //! this backend to coexist with other storage consumers such as FiBeWI.
 
 extern crate alloc;
@@ -12,8 +12,8 @@ use alloc::vec::Vec;
 use core::sync::atomic::{AtomicBool, Ordering};
 
 use config_space_manager::{Budget, ConfigBackend, Snapshot};
-use esp_flash_access::SharedFlash;
-use esp_flash_access::nvs::{NvsFlash, open as open_nvs};
+use espbewi_flash::SharedFlash;
+use espbewi_nvs::{NvsFlash, open as open_nvs};
 use esp_nvs::error::Error as NvsError;
 use esp_nvs::Nvs;
 use log::warn;
@@ -28,7 +28,7 @@ const FLAG_PRESENT: u8 = 0x01;
 const HEADER_LEN: usize = 4 + 8 + 1;
 const MAX_NVS_KEY_LEN: usize = 15;
 
-pub use esp_flash_access::nvs::NvsPartition;
+pub use espbewi_nvs::NvsPartition;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum NvsConfigError {
