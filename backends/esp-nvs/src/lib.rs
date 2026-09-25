@@ -30,6 +30,15 @@ const MAX_NVS_KEY_LEN: usize = 15;
 
 pub use esp_flash_access::nvs::NvsPartition;
 
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum NvsConfigError {
+    Unavailable,
+    Write,
+    InvalidSpace,
+    CorruptRecord,
+    GenerationOverflow,
+}
+
 static HEALTHY: AtomicBool = AtomicBool::new(true);
 
 #[derive(Clone, Copy)]
