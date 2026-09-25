@@ -11,11 +11,12 @@ categories = ["embedded", "hardware-support", "no-std"]
 
 [features]
 default = []
-esp32c3 = ["esp-flash-access/esp32c3", "esp-nvs/esp32c3"]
-esp32s3 = ["esp-flash-access/esp32s3", "esp-nvs/esp32s3"]
+esp32c3 = ["espbewi-nvs/esp32c3"]
+esp32s3 = ["espbewi-nvs/esp32s3"]
 
 [dependencies]
 config-space-manager = { path = "../.." }
-esp-flash-access = { git = "https://github.com/iobewi/esp-storage-manager", rev = "cb99450b87187eb266fa2636a22d4c7562b20c7b" }
+espbewi-flash = { git = "https://github.com/iobewi/espbewi", rev = "0b11f035d1aed6d901adca2098c6efc29a2cee83", package = "espbewi-flash" }
+espbewi-nvs = { git = "https://github.com/iobewi/espbewi", rev = "0b11f035d1aed6d901adca2098c6efc29a2cee83", package = "espbewi-nvs" }
 esp-nvs = "0.5.0"
 log = { version = "0.4.29", default-features = false }
