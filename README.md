@@ -28,7 +28,7 @@ config-space-manager/
 
 The core crate deliberately has no ESP dependency. The ESP backend owns
 ConfigSpace-specific NVS persistence semantics while the common physical ESP
-storage mechanics are supplied by `esp-storage-manager`.
+storage mechanics are supplied by `espbewi`.
 
 ## Boundary
 
@@ -48,7 +48,7 @@ The ESP/NVS backend owns:
 - backend health checks;
 - mapping ConfigSpace operations to NVS operations.
 
-`esp-storage-manager` owns:
+`espbewi` owns:
 
 - the single physical ESP flash capability;
 - serialization of physical flash access;
