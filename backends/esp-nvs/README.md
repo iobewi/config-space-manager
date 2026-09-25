@@ -3,7 +3,7 @@
 ESP NVS adapter for `config-space-manager`.
 
 This crate owns **ConfigSpace semantics over NVS**, not the physical ESP flash.
-The common hardware layer is provided by `esp-storage-manager`.
+The common hardware layer is provided by `espbewi`.
 
 ```text
 ConfigManager / ConfigSpace
@@ -13,7 +13,7 @@ config-space-manager-esp-nvs
   framing / quotas / generations
             │
             ▼
-esp-storage-manager
+espbewi
   shared flash + ESP NVS platform bridge
             │
             ▼
