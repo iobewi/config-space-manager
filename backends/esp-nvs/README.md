@@ -1,24 +1,29 @@
 # config-space-manager-esp-nvs
 
-ESP NVS backend for `config-space-manager`.
+ESP NVS adapter for `config-space-manager`.
 
-This crate is self-contained: it owns the physical `FlashStorage` instance,
-the cached ESP NVS view, capacity accounting and ConfigSpace record framing.
-It has no dependency on the former `esp-storage-manager` repository.
+This crate owns **ConfigSpace semantics over NVS**, not the physical ESP flash.
+The common hardware layer is provided by `esp-storage-manager`.
 
 ```text
 ConfigManager / ConfigSpace
             │
             ▼
 config-space-manager-esp-nvs
+  framing / quotas / generations
             │
             ▼
-      ESP NVS / flash
+esp-storage-manager
+  shared flash + ESP NVS platform bridge
+            │
+            ▼
+        ESP flash
 ```
 
-Application code cannot address NVS namespaces or keys directly. Persistent
-application state is represented as component-owned ConfigSpace objects.
+Application code cannot address ConfigSpace's NVS namespaces or keys directly.
+Persistent application state is represented as component-owned ConfigSpace
+objects.
 
-OTA transaction metadata is expected to use its own ConfigSpace like every
-other persistent object. Firmware-image partition I/O remains outside this
-NVS backend.
+OTA transaction metadata may use its own ConfigSpace like any other persistent
+object. Firmware-image partition I/O remains outside this backend and is handled
+through the same common hardware storage layer by FiBeWI's ESP adapter.
