@@ -2,9 +2,9 @@
 
 //! ESP NVS backend for config-space-manager.
 //!
-//! NVS semantics live here. Physical flash ownership is supplied by the
-//! neutral esp-flash-access capability so this backend can coexist with
-//! other flash consumers such as FiBeWI without exposing NVS outside.
+//! ConfigSpace persistence semantics live here. Physical flash ownership and
+//! the ESP NVS platform bridge are supplied by esp-storage-manager, allowing
+//! this backend to coexist with other storage consumers such as FiBeWI.
 
 extern crate alloc;
 
@@ -12,10 +12,9 @@ use alloc::vec::Vec;
 use core::sync::atomic::{AtomicBool, Ordering};
 
 use config_space_manager::{Budget, ConfigBackend, Snapshot};
-use embedded_storage::nor_flash::{ErrorType, MultiwriteNorFlash, NorFlash, ReadNorFlash};
-use esp_flash_access::{EspFlash, SharedFlash};
+use esp_flash_access::SharedFlash;
+use esp_flash_access::nvs::{NvsFlash, open as open_nvs};
 use esp_nvs::error::Error as NvsError;
-use esp_nvs::platform::Crc;
 use esp_nvs::Nvs;
 use log::warn;
 
@@ -29,65 +28,7 @@ const FLAG_PRESENT: u8 = 0x01;
 const HEADER_LEN: usize = 4 + 8 + 1;
 const MAX_NVS_KEY_LEN: usize = 15;
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub struct NvsPartition {
-    pub offset: usize,
-    pub size: usize,
-}
-
-impl NvsPartition {
-    pub const fn new(offset: usize, size: usize) -> Self {
-        Self { offset, size }
-    }
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum NvsConfigError {
-    Unavailable,
-    Write,
-    InvalidSpace,
-    CorruptRecord,
-    GenerationOverflow,
-}
-
-struct NvsFlash<'a>(&'a mut EspFlash);
-
-impl ErrorType for NvsFlash<'_> {
-    type Error = <EspFlash as ErrorType>::Error;
-}
-
-impl ReadNorFlash for NvsFlash<'_> {
-    const READ_SIZE: usize = <EspFlash as ReadNorFlash>::READ_SIZE;
-
-    fn read(&mut self, offset: u32, bytes: &mut [u8]) -> Result<(), Self::Error> {
-        self.0.read(offset, bytes)
-    }
-
-    fn capacity(&self) -> usize {
-        self.0.capacity()
-    }
-}
-
-impl NorFlash for NvsFlash<'_> {
-    const WRITE_SIZE: usize = <EspFlash as NorFlash>::WRITE_SIZE;
-    const ERASE_SIZE: usize = <EspFlash as NorFlash>::ERASE_SIZE;
-
-    fn erase(&mut self, from: u32, to: u32) -> Result<(), Self::Error> {
-        self.0.erase(from, to)
-    }
-
-    fn write(&mut self, offset: u32, bytes: &[u8]) -> Result<(), Self::Error> {
-        self.0.write(offset, bytes)
-    }
-}
-
-impl MultiwriteNorFlash for NvsFlash<'_> {}
-
-impl Crc for NvsFlash<'_> {
-    fn crc32(init: u32, data: &[u8]) -> u32 {
-        <esp_storage::FlashStorage<'static> as Crc>::crc32(init, data)
-    }
-}
+pub use esp_flash_access::nvs::NvsPartition;
 
 static HEALTHY: AtomicBool = AtomicBool::new(true);
 
@@ -105,7 +46,7 @@ impl NvsConfigBackend {
     ) -> Result<Self, NvsConfigError> {
         let capacity_units = {
             let mut flash = flash.lock().await;
-            let mut nvs = Nvs::new(partition.offset, partition.size, NvsFlash(&mut flash))
+            let mut nvs = open_nvs(&mut flash, partition)
                 .map_err(|e| {
                     warn!("NVS unavailable: {e:?}");
                     HEALTHY.store(false, Ordering::Relaxed);
@@ -153,7 +94,7 @@ impl NvsConfigBackend {
         f: impl FnOnce(&mut Nvs<NvsFlash<'_>>) -> Result<R, NvsConfigError>,
     ) -> Result<R, NvsConfigError> {
         let mut flash = self.flash.lock().await;
-        let mut nvs = Nvs::new(self.partition.offset, self.partition.size, NvsFlash(&mut flash))
+        let mut nvs = open_nvs(&mut flash, self.partition)
             .map_err(|e| {
                 warn!("NVS unavailable: {e:?}");
                 HEALTHY.store(false, Ordering::Relaxed);
