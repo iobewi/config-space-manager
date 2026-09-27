@@ -16,7 +16,7 @@ esp32s3 = ["espbewi-nvs/esp32s3"]
 
 [dependencies]
 config-space-manager = { path = "../.." }
-espbewi-flash = { git = "https://github.com/iobewi/espbewi", rev = "0b11f035d1aed6d901adca2098c6efc29a2cee83", package = "espbewi-flash" }
-espbewi-nvs = { git = "https://github.com/iobewi/espbewi", rev = "0b11f035d1aed6d901adca2098c6efc29a2cee83", package = "espbewi-nvs" }
+espbewi-flash = { git = "https://github.com/iobewi/espbewi", rev = "95a99b9605ea4d7ebfba4f2c94f13a7b403b82c0", package = "espbewi-flash" }
+espbewi-nvs = { git = "https://github.com/iobewi/espbewi", rev = "95a99b9605ea4d7ebfba4f2c94f13a7b403b82c0", package = "espbewi-nvs" }
 esp-nvs = "0.5.0"
 log = { version = "0.4.29", default-features = false }
