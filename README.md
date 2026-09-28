@@ -1,5 +1,12 @@
 # config-space-manager
 
+> **Moved to IOBEWI.** The maintained portable core is now
+> [`iobewi-config-space`](https://github.com/iobewi/iobewi/tree/main/services/config-space).
+> The ESP NVS implementation is
+> [`iobewi-esp-config-space`](https://github.com/iobewi/iobewi-esp/tree/main/adapters/config-space).
+> This repository remains available for history. New consumers should use the
+> `iobewi-config-space` Cargo package and `iobewi_config_space` Rust imports.
+
 `config-space-manager` is a small `no_std`, hardware-agnostic configuration
 ownership and quota layer for embedded systems.
 
